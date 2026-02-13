@@ -1,0 +1,17 @@
+/opal
+
+*.mp4
+*.mkv
+*.ts
+
+*.png
+*.jpg
+*.jpeg
+
+db/*
+/web
+
+imdb.json
+
+config/libraries/*.cfg
+config/tmdb.cfg

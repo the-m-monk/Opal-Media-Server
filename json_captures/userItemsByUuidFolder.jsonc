@@ -1,0 +1,53 @@
+{
+    "Name": "Movies plus shows",
+    "ServerId": "85e7e9a4fdd743bea5510c6401540719",
+    "Id": "ba1e191a58b0a4ab34c09e33b231b6eb",
+    "Etag": "cc06e6c65455e4e87b54215d7686da91",
+    "DateCreated": "2026-01-25T02:03:48.5200841Z",
+    "DateLastMediaAdded": "0001-01-01T00:00:00.0000000Z",
+    "CanDelete": false,
+    "CanDownload": false,
+    "SortName": "movies plus shows",
+    "ExternalUrls": [],
+    "Path": "/home/mmonk/.local/share/jellyfin/root/default/Movies plus shows",
+    "EnableMediaSourceDisplay": true,
+    "ChannelId": null,
+    "Taglines": [],
+    "Genres": [],
+    "PlayAccess": "Full",
+    "RemoteTrailers": [],
+    "ProviderIds": {},
+    "IsFolder": true,
+    "ParentId": "e9d5075a555c1cbc394eec4cef295274",
+    "Type": "CollectionFolder",
+    "People": [],
+    "Studios": [],
+    "GenreItems": [],
+    "LocalTrailerCount": 0,
+    "UserData": {
+        "PlaybackPositionTicks": 0,
+        "PlayCount": 0,
+        "IsFavorite": false,
+        "Played": false,
+        "Key": "ba1e191a-58b0-a4ab-34c0-9e33b231b6eb",
+        "ItemId": "ba1e191a58b0a4ab34c09e33b231b6eb"
+    },
+    "ChildCount": 2,
+    "SpecialFeatureCount": 0,
+    "DisplayPreferencesId": "ba1e191a58b0a4ab34c09e33b231b6eb",
+    "Tags": [],
+    "PrimaryImageAspectRatio": 1.7777777777777777,
+    "ImageTags": {
+        "Primary": "27739ba3164e102573071433d9c803bf"
+    },
+    "BackdropImageTags": [],
+    "ImageBlurHashes": {
+        "Primary": {
+            "27739ba3164e102573071433d9c803bf": "WC7LM*ozMJaKbvofQnaetloyV@bH00ayofWBofV@W:ayV[ayoff6"
+        }
+    },
+    "LocationType": "FileSystem",
+    "MediaType": "Unknown",
+    "LockedFields": [],
+    "LockData": false
+}

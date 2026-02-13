@@ -1,0 +1,21 @@
+Add argon2id pepper
+perform dummy argon2id check even if user is invalid
+switch to yaml or similar instead of custom .env-like config
+
+the user creation utility does not check to see if a user under that name already exists which creates a duplicate user entry,
+however this duplicate use entry has no actual effect on the server as server will default to using the first entry
+
+downloads: GET /Items/{item uuid}/Download?api_key={access token} (serve file as usual)
+
+add server id generation
+
+replace user auth mutex with rwmutex
+
+clean up argon2id code, replace result with err instead of string
+
+clean and merge jfstructs duplicates
+
+capture json for movie and tvshow
+
+fix "my media" listing having no images for libraries
+fix metadata image fetcher to pick the same images as jellyfin

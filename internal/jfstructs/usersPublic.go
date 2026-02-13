@@ -1,0 +1,83 @@
+package jfstructs
+
+/*
+Example response:
+GET https://demo.jellyfin.org/stable/users/public
+[
+	{
+		"Name":"demo",
+		"ServerId":"f0b3381645f04afb9a0e392e74b6a1b0",
+		"Id":"4ed1b8b42a7c4ea682f0fe5d08d4e278",
+		"PrimaryImageTag":"6f04f86b8bc21df4b638617ab76e0ec1",
+		"HasPassword":false,
+		"HasConfiguredPassword":false,
+		"HasConfiguredEasyPassword":false,
+		"EnableAutoLogin":false,
+		"LastLoginDate":"2026-01-22T11:41:50.9125289Z",
+		"LastActivityDate":"2026-01-22T11:42:52.3538062Z",
+		"Configuration": {
+			"PlayDefaultAudioTrack":true,
+			"SubtitleLanguagePreference":"",
+			"DisplayMissingEpisodes":false,
+			"GroupedFolders":[],
+			"SubtitleMode":"Default",
+			"DisplayCollectionsView":false,
+			"EnableLocalPassword":false,
+			"OrderedViews":["f137a2dd21bbc1b99aa5c0f6bf02a805","7e64e319657a9516ec78490da03edccb","accbf8ec18a80e054486551fbf1306b9","a656b907eb3a73532e40e44b968d0225"],
+			"LatestItemsExcludes":[],
+			"MyMediaExcludes":[],
+			"HidePlayedInLatest":true,
+			"RememberAudioSelections":true,
+			"RememberSubtitleSelections":true,
+			"EnableNextEpisodeAutoPlay":true,
+			"CastReceiverId":"F007D354"
+		},
+		"Policy":{
+			"IsAdministrator":false,
+			"IsHidden":false,
+			"EnableCollectionManagement":false,
+			"EnableSubtitleManagement":false,
+			"EnableLyricManagement":false,
+			"IsDisabled":false,
+			"BlockedTags":[],
+			"AllowedTags":[],
+			"EnableUserPreferenceAccess":true,
+			"AccessSchedules":[],
+			"BlockUnratedItems":[],
+			"EnableRemoteControlOfOtherUsers":false,
+			"EnableSharedDeviceControl":false,
+			"EnableRemoteAccess":true,
+			"EnableLiveTvManagement":true,
+			"EnableLiveTvAccess":true,
+			"EnableMediaPlayback":true,
+			"EnableAudioPlaybackTranscoding":true,
+			"EnableVideoPlaybackTranscoding":true,
+			"EnablePlaybackRemuxing":true,
+			"ForceRemoteSourceTranscoding":false,
+			"EnableContentDeletion":false,
+			"EnableContentDeletionFromFolders":[],
+			"EnableContentDownloading":false,
+			"EnableSyncTranscoding":true,
+			"EnableMediaConversion":true,
+			"EnabledDevices":[],
+			"EnableAllDevices":true,
+			"EnabledChannels":[],
+			"EnableAllChannels":false,
+			"EnabledFolders":[],
+			"EnableAllFolders":true,
+			"InvalidLoginAttemptCount":0,
+			"LoginAttemptsBeforeLockout":-1,
+			"MaxActiveSessions":0,
+			"EnablePublicSharing":true,
+			"BlockedMediaFolders":[],
+			"BlockedChannels":[],
+			"RemoteClientBitrateLimit":0,
+			"AuthenticationProviderId":"Jellyfin.Server.Implementations.Users.DefaultAuthenticationProvider",
+			"PasswordResetProviderId":"Jellyfin.Server.Implementations.Users.DefaultPasswordResetProvider",
+			"SyncPlayAccess":"CreateAndJoinGroups"
+		}
+	}
+]
+*/
+
+type ResponseUsersPublic []CommonUser

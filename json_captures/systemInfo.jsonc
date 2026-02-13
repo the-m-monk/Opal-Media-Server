@@ -1,0 +1,37 @@
+{
+  "OperatingSystemDisplayName": "",
+  "HasPendingRestart": false,
+  "IsShuttingDown": false,
+  "SupportsLibraryMonitor": true,
+  "WebSocketPortNumber": 8096,
+  "CompletedInstallations": [],
+  "CanSelfRestart": true,
+  "CanLaunchWebBrowser": false,
+  "ProgramDataPath": "/home/mmonk/.local/share/jellyfin",
+  "WebPath": "/home/mmonk/Desktop/jellyfin_10.11.6-amd64/jellyfin/jellyfin-web",
+  "ItemsByNamePath": "/home/mmonk/.local/share/jellyfin/metadata",
+  "CachePath": "/home/mmonk/.cache/jellyfin",
+  "LogPath": "/home/mmonk/.local/share/jellyfin/log",
+  "InternalMetadataPath": "/home/mmonk/.local/share/jellyfin/metadata",
+  "TranscodingTempPath": "/home/mmonk/.cache/jellyfin/transcodes",
+  "CastReceiverApplications": [
+    {
+      "Id": "F007D354",
+      "Name": "Stable"
+    },
+    {
+      "Id": "6F511C87",
+      "Name": "Unstable"
+    }
+  ],
+  "HasUpdateAvailable": false,
+  "EncoderLocation": "System",
+  "SystemArchitecture": "X64",
+  "LocalAddress": "http://127.0.0.1:8096",
+  "ServerName": "test",
+  "Version": "10.11.6",
+  "ProductName": "Jellyfin Server",
+  "OperatingSystem": "",
+  "Id": "85e7e9a4fdd743bea5510c6401540719",
+  "StartupWizardCompleted": true
+}

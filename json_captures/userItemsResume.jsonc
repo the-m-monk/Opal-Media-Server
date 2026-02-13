@@ -1,0 +1,55 @@
+/*
+Example response:
+GET /Users/ea2c447b4f6640ff83d0b65b0fe4b92a/Items/Resume?Limit=12&Recursive=true&Fields=PrimaryImageAspectRatio&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb&EnableTotalRecordCount=false&MediaTypes=Video
+query parameters:
+Limit=12
+Recursive=true
+Fields=PrimaryImageAspectRatio
+ImageTypeLimit=1
+EnableImageTypes=Primary%2CBackdrop%2CThumb
+EnableTotalRecordCount=false
+MediaTypes=Video
+*/
+
+{
+    "Items": [
+        {
+            "Name": "filename",
+            "ServerId": "85e7e9a4fdd743bea5510c6401540719",
+            "Id": "49d1d68c3c2f5db444f02638321ff964",
+            "HasSubtitles": true,
+            "Container": "mkv",
+            "PremiereDate": "2018-11-30T04:18:43.0000000Z",
+            "ChannelId": null,
+            "RunTimeTicks": 49749850000,
+            "ProductionYear": 2018,
+            "IsFolder": false,
+            "Type": "Movie",
+            "UserData": {
+                "PlayedPercentage": 43.82557883089095,
+                "PlaybackPositionTicks": 21803159730,
+                "PlayCount": 2,
+                "IsFavorite": false,
+                "LastPlayedDate": "2026-01-24T13:27:02.3809523Z",
+                "Played": false,
+                "Key": "49d1d68c-3c2f-5db4-44f0-2638321ff964",
+                "ItemId": "49d1d68c3c2f5db444f02638321ff964"
+            },
+            "PrimaryImageAspectRatio": 0.7070063694267515,
+            "VideoType": "VideoFile",
+            "ImageTags": {
+                "Primary": "41b26b069aaad042a8293c6fe41d9738"
+            },
+            "BackdropImageTags": [],
+            "ImageBlurHashes": {
+                "Primary": {
+                    "41b26b069aaad042a8293c6fe41d9738": "dHCsm.-pIpRj8^R,tRt7IlRii{t8?Hs;j:aw%gxuRjbF"
+                }
+            },
+            "LocationType": "FileSystem",
+            "MediaType": "Video"
+        }
+    ],
+    "TotalRecordCount": 1,
+    "StartIndex": 0
+}
