@@ -57,7 +57,6 @@ func EndpointUserViews(w http.ResponseWriter, r *http.Request) {
 			ServerID: "STUBBED",
 			//This is technically incorrect behaviour, standard api responses from a jellyfin server returns stripped uuids,
 			//however not stripping uuids appears to actually have no effect on the client
-			//TODO: replace all instances of stripped uuids with regular uuids
 			ID:          library.RootUuid,
 			CanDownload: true,
 			//TODO: might be incorrect behaviour, investigate further with special characters
@@ -74,7 +73,6 @@ func EndpointUserViews(w http.ResponseWriter, r *http.Request) {
 			//TODO: probably need to set:
 			//	UserData,
 			//	DisplayPreferencesId,
-			//	ImageTags,
 			//	ImageBlurHashes,
 			//	PrimaryImageAspectRatio
 			//	CollectionType
@@ -82,6 +80,7 @@ func EndpointUserViews(w http.ResponseWriter, r *http.Request) {
 			MediaType:    "Unknown",
 		}
 
+		newItem.ImageTags.Primary = "library.jpg"
 		res.Items = append(res.Items, newItem)
 	}
 

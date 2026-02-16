@@ -11,8 +11,6 @@ func Start() {
 	Addr := config.FetchValue("/server.cfg", "address", true)
 	Port := config.FetchValue("/server.cfg", "port", true)
 
-	api.CacheDir = config.FetchValue("/server.cfg", "cache_dir", true)
-
 	fileServer := http.FileServer(http.Dir("web"))
 	http.Handle("/web/", http.StripPrefix("/web/", fileServer))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

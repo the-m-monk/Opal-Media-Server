@@ -238,6 +238,10 @@ func EndpointUsersItemsLatest(w http.ResponseWriter, r *http.Request) {
 	rootUuid := query.Get("ParentId")
 	nM := librarymgmt.NewestMedia[rootUuid]
 
+	if nM == nil {
+		http.Error(w, "Bad UUID", http.StatusBadRequest)
+	}
+
 	//http://localhost:7096/Users/ce1f6aa6-4e44-5414-8698-edaa9af48fb1/Items/Latest
 	//Limit=16
 	//Fields=PrimaryImageAspectRatio%2CPath

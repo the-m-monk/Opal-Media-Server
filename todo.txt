@@ -17,5 +17,6 @@ clean and merge jfstructs duplicates
 
 capture json for movie and tvshow
 
-fix "my media" listing having no images for libraries
 fix metadata image fetcher to pick the same images as jellyfin
+
+properly cache library namecards instead of always rerendering on server statrtup

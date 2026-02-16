@@ -15,7 +15,7 @@ type ConfigNode struct {
 	Properties []string
 }
 
-var configDirectoryPath string = "./config"
+var ConfigDirectoryPath string = "./config"
 var RootConfigNode ConfigNode
 
 func Init() {
@@ -26,11 +26,11 @@ func Init() {
 		}
 
 		dirStrSplit := strings.Split(arg, "=")
-		configDirectoryPath = dirStrSplit[len(dirStrSplit)-1]
+		ConfigDirectoryPath = dirStrSplit[len(dirStrSplit)-1]
 	}
 
-	fmt.Println("Config directory:", configDirectoryPath)
-	RootConfigNode = LoadConfig(configDirectoryPath, "/")
+	fmt.Println("Config directory:", ConfigDirectoryPath)
+	RootConfigNode = LoadConfig(ConfigDirectoryPath, "/")
 	PrintConfigTree(RootConfigNode)
 }
 
@@ -46,8 +46,8 @@ func LoadConfig(filePath string, name string) ConfigNode {
 
 	fileMode := fileStat.Mode()
 
-	if !fileMode.IsDir() && (filePath == configDirectoryPath) {
-		fmt.Printf("Config parsing error: %s is not a directory\n", configDirectoryPath)
+	if !fileMode.IsDir() && (filePath == ConfigDirectoryPath) {
+		fmt.Printf("Config parsing error: %s is not a directory\n", ConfigDirectoryPath)
 		os.Exit(1)
 	}
 
@@ -66,7 +66,7 @@ func LoadConfig(filePath string, name string) ConfigNode {
 
 		for _, subFile := range subDirEntries {
 			var childName string
-			if filePath == configDirectoryPath {
+			if filePath == ConfigDirectoryPath {
 				childName = "/" + subFile.Name()
 			} else {
 				childName = name + "/" + subFile.Name()
@@ -156,7 +156,7 @@ func FetchValue(path string, key string, errorOnFail bool) string {
 	}
 
 	if errorOnFail {
-		fmt.Printf("Config fetching error: unable to find %s in %s\n", key, configDirectoryPath+path)
+		fmt.Printf("Config fetching error: unable to find %s in %s\n", key, ConfigDirectoryPath+path)
 		os.Exit(1)
 	}
 	return "ERROR_NODE_DOES_NOT_CONTAIN_KEY"

@@ -271,11 +271,11 @@ type ResponseUserViewsItem struct {
 		Primary string `json:"Primary"`
 	} `json:"ImageTags,omitempty"`
 	BackdropImageTags []any `json:"BackdropImageTags"`
-	ImageBlurHashes   struct {
-		Primary struct {
-			//Ec22D3B46Cbb21C6B1C9D0F041123C1C string `json:"ec22d3b46cbb21c6b1c9d0f041123c1c"`
-		} `json:"Primary"`
-	} `json:"ImageBlurHashes,omitempty"`
+	//ImageBlurHashes   struct {
+	//	Primary struct {
+	//		//Ec22D3B46Cbb21C6B1C9D0F041123C1C string `json:"ec22d3b46cbb21c6b1c9d0f041123c1c"`
+	//	} `json:"Primary"`
+	//} `json:"ImageBlurHashes,omitempty"`
 	LocationType string `json:"LocationType"`
 	MediaType    string `json:"MediaType"`
 	LockedFields []any  `json:"LockedFields"`

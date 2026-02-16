@@ -7,7 +7,11 @@ import (
 	"strings"
 )
 
+var CacheDir string
+
 func Init() {
+	CacheDir = config.FetchValue("/server.cfg", "cache_dir", true)
+
 	libraryConfigList := config.FindNode("/libraries", &config.RootConfigNode)
 	if libraryConfigList == nil {
 		fmt.Println("Error: unable to find /libraries in config directory")

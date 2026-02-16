@@ -29,6 +29,11 @@ metadata_dir="./metadata"
 cache_dir="./cache"
 ```
 
+/config/theme.css:
+```
+@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+```
+
 2. Create library configs
 
 /config/libraries/example_lib.cfg:

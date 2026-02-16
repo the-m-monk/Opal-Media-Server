@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"opal/internal/config"
 	"os"
 	"path"
@@ -69,6 +70,15 @@ func buildLibraryTree() {
 		LibTreeMap[newLibNamespace.String()] = newLibNode
 
 		LibTree = append(LibTree, newLibNode)
+
+		imageCachePath := filepath.Join(CacheDir, "images")
+		libNameCardPath := filepath.Join(imageCachePath, newLibNode.RootUuid+".png")
+
+		os.MkdirAll(imageCachePath, 0755)
+		err = RenderNameCard(rootLib.DisplayName, libNameCardPath)
+		if err != nil {
+			log.Printf("[WARN] librarymgmt.buildLibraryTree: failed to render library name card: %v\n", err)
+		}
 	}
 }
 
