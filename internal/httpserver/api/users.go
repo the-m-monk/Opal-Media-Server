@@ -679,7 +679,7 @@ func EndpointUsersItems(w http.ResponseWriter, r *http.Request) {
 	startIndex, _ := strconv.Atoi(query.Get("StartIndex"))
 	limit, _ := strconv.Atoi(query.Get("Limit"))
 
-	if startIndex >= len(children) {
+	if startIndex > len(children) {
 		http.Error(w, "Malformed request", http.StatusBadRequest)
 		return
 	}
@@ -689,17 +689,13 @@ func EndpointUsersItems(w http.ResponseWriter, r *http.Request) {
 		limit = totalCount
 	}
 
-	endIndex := startIndex + limit
-	if startIndex > totalCount {
-		startIndex = totalCount
-	}
-	if endIndex > totalCount {
-		endIndex = totalCount
+	if limit <= 0 || startIndex+limit > totalCount {
+		limit = totalCount - startIndex
 	}
 
-	resChildren := children[startIndex:endIndex]
+	resChildren := children[startIndex : startIndex+limit]
 
-	var resItems []jfstructs.ResponseUsersItemsItem
+	resItems := make([]jfstructs.ResponseUsersItemsItem, 0)
 	for _, child := range resChildren {
 		cItem := jfstructs.ResponseUsersItemsItem{
 			Name:     child.Name,
