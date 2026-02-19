@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"opal/internal/config"
 	"os"
+	"runtime"
+	"runtime/debug"
 	"strings"
 )
 
@@ -34,5 +36,10 @@ func Init() {
 		AllLibraries = append(AllLibraries, newLib)
 	}
 
+	initNameCardRenderer()
 	initMetadata()
+
+	nameCardFont = nil
+	runtime.GC()
+	debug.FreeOSMemory() //Forces runtime to free up all the memory it allocated when rendering the name cards (which can often be +50MiB)
 }

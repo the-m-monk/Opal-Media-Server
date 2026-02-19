@@ -7,12 +7,18 @@ import (
 	"opal/internal/librarymgmt"
 	"opal/internal/usermgmt"
 	"os"
+	// _ "net/http/pprof"
 )
 
 // TODO: use linker version numbers for releases
 var version_number = "dev"
 
 func main() {
+	//	go func() {
+	//		log.Println("pprof debugger on http://localhost:6060")
+	//		log.Fatal(http.ListenAndServe("localhost:6060", nil))
+	//	}()
+
 	fmt.Println("Opal media server starting \nVersion:", version_number)
 
 	//TODO: make configurable
