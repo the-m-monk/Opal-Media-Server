@@ -12,6 +12,7 @@ add server id generation
 replace user auth mutex with rwmutex
 
 clean up argon2id code, replace result with err instead of string
+clean up config.go code, replace result with err and string instead of just string
 
 clean and merge jfstructs duplicates
 

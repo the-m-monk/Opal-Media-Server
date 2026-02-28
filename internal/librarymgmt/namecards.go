@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 
 	"github.com/fogleman/gg"
@@ -20,13 +20,13 @@ func initNameCardRenderer() {
 
 	fontBytes, err := os.ReadFile(fontPath)
 	if err != nil {
-		log.Printf("[ERROR] failed to load \"%s\", library namecards will not render correctly\n", fontPath)
+		slog.Error("failed to load font, library namecards will not render correctly", "fontPath", fontPath)
 		return
 	}
 
 	f, err := truetype.Parse(fontBytes)
 	if err != nil {
-		log.Printf("[ERROR] failed to parse \"%s\", library namecards will not render correctly\n", fontPath)
+		slog.Error("failed to parse font, library namecards will not render correctly", "fontPath", fontPath)
 		return
 	}
 

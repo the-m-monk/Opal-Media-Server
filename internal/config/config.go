@@ -3,8 +3,10 @@ package config
 //TODO: change folder terminology to directory
 
 import (
-	"fmt"
+	"context"
+	"log/slog"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -29,9 +31,12 @@ func Init() {
 		ConfigDirectoryPath = dirStrSplit[len(dirStrSplit)-1]
 	}
 
-	fmt.Println("Config directory:", ConfigDirectoryPath)
+	slog.Info("parsing config directory:", "path", ConfigDirectoryPath)
 	RootConfigNode = LoadConfig(ConfigDirectoryPath, "/")
-	PrintConfigTree(RootConfigNode)
+
+	if slog.Default().Enabled(context.Background(), slog.LevelDebug) {
+		PrintConfigTree(RootConfigNode)
+	}
 }
 
 func LoadConfig(filePath string, name string) ConfigNode {
@@ -40,19 +45,19 @@ func LoadConfig(filePath string, name string) ConfigNode {
 
 	fileStat, err := os.Lstat(filePath)
 	if err != nil {
-		fmt.Printf("Config parsing error: %s\n", err.Error())
+		slog.Error("failed to parse config", "file", filePath, "reason", err.Error())
 		os.Exit(1)
 	}
 
 	fileMode := fileStat.Mode()
 
 	if !fileMode.IsDir() && (filePath == ConfigDirectoryPath) {
-		fmt.Printf("Config parsing error: %s is not a directory\n", ConfigDirectoryPath)
+		slog.Error("config directory path does not lead to a directory", "path", ConfigDirectoryPath)
 		os.Exit(1)
 	}
 
 	if fileMode&os.ModeSymlink != 0 {
-		fmt.Println("Config parsing error: symlinks currently not supported in config tree")
+		slog.Error("symlinks are currently not supported in the config tree", "offendingFile", filePath)
 		os.Exit(1)
 	}
 
@@ -60,7 +65,7 @@ func LoadConfig(filePath string, name string) ConfigNode {
 		retNode.Properties = append(retNode.Properties, "folder=1")
 		subDirEntries, err := os.ReadDir(filePath)
 		if err != nil {
-			fmt.Printf("Config parsing error: %s\n", err.Error())
+			slog.Error("failed to open directory", "path", filePath, "reason", err.Error())
 			os.Exit(1)
 		}
 
@@ -77,13 +82,13 @@ func LoadConfig(filePath string, name string) ConfigNode {
 	}
 
 	if !fileMode.IsRegular() {
-		fmt.Printf("Config parsing error: unable to determine filetype of %s\n", filePath)
+		slog.Error("unable to determine filetype", "file", filePath)
 		os.Exit(1)
 	}
 
 	fileBytes, err := os.ReadFile(filePath)
 	if err != nil {
-		fmt.Printf("Config parsing error: %s\n", err.Error())
+		slog.Error("failed to open config file", "file", filePath, "reason", err.Error())
 	}
 
 	fileString := string(fileBytes)
@@ -97,17 +102,18 @@ func LoadConfig(filePath string, name string) ConfigNode {
 }
 
 func PrintConfigTree(node ConfigNode) {
-	fmt.Printf("%s\n", node.Name)
-
 	if NodeIsFolder(&node) {
+		slog.Debug("listing config directory", "dir", node.Name)
 		for _, child := range node.Children {
 			PrintConfigTree(child)
 		}
 		return
 	}
 
+	slog.Debug("listing config node properties", "file", node.Name)
+
 	for i, property := range node.Properties {
-		fmt.Printf("%v: %s\n", i, property)
+		slog.Debug("property", "index", i, "value", property)
 	}
 }
 
@@ -134,12 +140,14 @@ func FindNode(path string, startNode *ConfigNode) *ConfigNode {
 	return nil
 }
 
+//TODO: return errors not strings
+
 func FetchValue(path string, key string, errorOnFail bool) string {
 	pathNode := FindNode(path, &RootConfigNode)
 	if pathNode != nil {
-		//fmt.Printf("Found node %s @ %p\n", path, pathNode)
+		slog.Debug("found config node", "path", path)
 	} else {
-		fmt.Printf("Config fetching error: unable to find %s in config directory\n", path)
+		slog.Error("unable to find config node", "configPath", path)
 		if errorOnFail {
 			os.Exit(1)
 		}
@@ -155,8 +163,9 @@ func FetchValue(path string, key string, errorOnFail bool) string {
 		}
 	}
 
+	absPath := filepath.Join(ConfigDirectoryPath, path)
+	slog.Error("config node doesnt not contain key", "path", absPath, "key", key)
 	if errorOnFail {
-		fmt.Printf("Config fetching error: unable to find %s in %s\n", key, ConfigDirectoryPath+path)
 		os.Exit(1)
 	}
 	return "ERROR_NODE_DOES_NOT_CONTAIN_KEY"

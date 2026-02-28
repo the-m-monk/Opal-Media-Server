@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"opal/internal/config"
 	"os"
 	"path"
@@ -32,7 +32,7 @@ func initMetadata() {
 
 	MetadataDir = config.FetchValue("/server.cfg", "metadata_dir", true)
 	if err := os.MkdirAll(MetadataDir, 0755); err != nil {
-		fmt.Println("Error: failed to mkdir ")
+		slog.Error("failed to mkdir", "dir", MetadataDir, "reason", err.Error())
 		os.Exit(1)
 	}
 
@@ -50,16 +50,16 @@ func initMetadata() {
 
 func buildLibraryTree() {
 	for i, rootLib := range AllLibraries {
-		fmt.Printf("Scanning %s\n", rootLib.DisplayName)
+		slog.Info("Scanning library", "libDisplayName", rootLib.DisplayName)
 
 		rootStat, err := os.Stat(rootLib.Path)
 		if err != nil {
-			fmt.Printf("Error: failed to parse library @ %s: %s", rootLib.Path, err.Error())
+			slog.Error("failed to parse library", "rootLib.Path", rootLib.Path, "reason", err.Error())
 			os.Exit(1)
 		}
 
 		if !rootStat.IsDir() {
-			fmt.Printf("Error: %s is not a directory", rootLib.Path)
+			slog.Error("library path is not a directory", "offendingLibrary", rootLib.DisplayName, "offendingPath", rootLib.Path)
 			os.Exit(1)
 		}
 
@@ -81,13 +81,13 @@ func buildLibraryTree() {
 		os.MkdirAll(imageCachePath, 0755)
 		err = RenderNameCard(rootLib.DisplayName, libNameCardPath)
 		if err != nil {
-			log.Printf("[WARN] librarymgmt.buildLibraryTree: failed to render library name card: %v\n", err)
+			slog.Warn("failed to render library name card", "lib.DisplayName", rootLib.DisplayName, "reason", err.Error())
 		}
 	}
 }
 
 func searchDir(libRootPath string, relativePath string, libNamespace uuid.UUID) *TreeNode {
-	fmt.Println(relativePath)
+	slog.Info("Searching for media", "relPath", relativePath)
 
 	nodeId := uuid.NewSHA1(libNamespace, []byte(filepath.ToSlash(relativePath))).String()
 
@@ -104,7 +104,7 @@ func searchDir(libRootPath string, relativePath string, libNamespace uuid.UUID) 
 	absPath := filepath.Join(libRootPath, relativePath)
 	subFiles, err := os.ReadDir(absPath)
 	if err != nil {
-		fmt.Printf("Error: failed to list directory: %s\n", err.Error())
+		slog.Error("failed to list library directory", "path", absPath, "reason", err.Error())
 		return retNode
 	}
 
@@ -167,7 +167,7 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 	if _, err := os.Stat(MetadataDirPath); errors.Is(err, os.ErrNotExist) {
 		err := os.MkdirAll(MetadataDirPath, 0755)
 		if err != nil {
-			fmt.Printf("Error: failed to create %s\n", MetadataDirPath)
+			slog.Error("failed to mkdir", "path", MetadataDirPath, "reason", err.Error())
 			return
 		}
 
@@ -188,7 +188,7 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 		metadataJsonPath := path.Join(MetadataDirPath, "imdb.json")
 		imdbJsonFile, err := os.Open(metadataJsonPath)
 		if err != nil {
-			fmt.Printf("Error: failed to open %s\n", metadataJsonPath)
+			slog.Error("failed to open file", "path", metadataJsonPath, "reason", err.Error())
 			return
 		}
 		defer imdbJsonFile.Close()
@@ -197,13 +197,13 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 		case "movie":
 			err = json.NewDecoder(imdbJsonFile).Decode(&item.MovieMetadata)
 			if err != nil {
-				fmt.Printf("Error: failed to decode %s\n", metadataJsonPath)
+				slog.Error("failed to decode json", "file", metadataJsonPath, "reason", err.Error())
 				return
 			}
 		case "tvshow":
 			err = json.NewDecoder(imdbJsonFile).Decode(&item.TvshowMetadata)
 			if err != nil {
-				fmt.Printf("Error: failed to decode %s\n", metadataJsonPath)
+				slog.Error("failed to decode json", "file", metadataJsonPath, "reason", err.Error())
 				return
 			}
 		default:
@@ -218,7 +218,7 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 	case "movie":
 		item.ReleasedTime, err = time.Parse(timeLayout, item.MovieMetadata.ReleaseDate)
 		if err != nil {
-			fmt.Println("Error parsing date:", err)
+			slog.Error("failed to parse date", "offendingMedia", item.MovieMetadata.Title, "reason", err.Error())
 			return
 		}
 
@@ -229,11 +229,11 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 			item.Rating = r.ReleaseDates[0].Certification
 		}
 
-		fmt.Printf("Registering: %s\n", item.MovieMetadata.Title)
+		slog.Info("Registering movie", "title", item.MovieMetadata.Title)
 	case "tvshow":
 		item.ReleasedTime, err = time.Parse(timeLayout, item.TvshowMetadata.FirstAirDate)
 		if err != nil {
-			fmt.Println("Error parsing date:", err)
+			slog.Error("failed to parse date", "offendingMedia", item.TvshowMetadata.Name, "reason", err.Error())
 			return
 		}
 
@@ -244,7 +244,7 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 		//	item.Rating = r.ReleaseDates[0].Certification
 		//}
 
-		fmt.Printf("Registering: %s\n", item.TvshowMetadata.Name)
+		slog.Info("Registering tvshow", "name", item.TvshowMetadata.Name)
 	default:
 		return
 	}
@@ -252,18 +252,18 @@ func fetchMetadata(imdbId string, item *TreeNode) {
 
 func fetchMetadataMovie(findRes *tmdbFindResponse, imdbId string, item *TreeNode) {
 	if len(findRes.MovieResults) > 1 {
-		fmt.Printf("Error: tmdb api lookup for %s yielded multiple results, skipping", item.Path)
+		slog.Warn("tmdb api lookup yield multiple results, skipping", "offendingMedia", item.Path)
 		return
 	}
 
 	if len(findRes.MovieResults) == 0 && len(findRes.TvResults) != 0 {
 		rootLibraryName := AllLibrariesMap[item.RootUuid].DisplayName
-		fmt.Printf("Error: %s in %s has likely been mislablled as a movie when it is actually a tvshow, skipping\n", item.Path, rootLibraryName)
+		slog.Warn("item has likely been mislablled as a movie when it is actually a tvshow, skipping", "item", fmt.Sprintf("%s in %s", item.Path, rootLibraryName))
 		return
 	}
 
 	if len(findRes.MovieResults) == 0 {
-		fmt.Printf("Error: tmdb api lookup for %s yielded no results, skipping", item.Path)
+		slog.Warn("tmdb api lookup yield not results, skipping", "item", item.Path)
 		return
 	}
 
@@ -290,23 +290,23 @@ func fetchMetadataMovie(findRes *tmdbFindResponse, imdbId string, item *TreeNode
 
 	err := tmdbFetchImage(posterPath, posterImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch poster image for %s\n", movieInfo.Title)
+		slog.Warn("failed to fetch poster image", "item", movieInfo.Title, "reason", err.Error())
 	}
 
 	err = tmdbFetchImage(logoPath, logoImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch logo image for %s\n", movieInfo.Title)
+		slog.Warn("failed to fetch logo image", "item", movieInfo.Title, "reason", err.Error())
 	}
 
 	err = tmdbFetchImage(backdropPath, backdropImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch backdrop image for %s\n", movieInfo.Title)
+		slog.Warn("failed to fetch backdrop image", "item", movieInfo.Title, "reason", err.Error())
 	}
 
 	metadataJsonPath := path.Join(MetadataDirPath, "imdb.json")
 	metadataJsonFile, err := os.Create(metadataJsonPath)
 	if err != nil {
-		fmt.Printf("Error: failed to create %s\n", metadataJsonPath)
+		slog.Warn("failed to create imdb.json", "item", metadataJsonPath, "reason", err.Error())
 		return
 	}
 	defer metadataJsonFile.Close()
@@ -314,25 +314,25 @@ func fetchMetadataMovie(findRes *tmdbFindResponse, imdbId string, item *TreeNode
 	imdbJsonEncoder := json.NewEncoder(metadataJsonFile)
 	imdbJsonEncoder.SetIndent("", "    ")
 	if err = imdbJsonEncoder.Encode(movieInfo); err != nil {
-		fmt.Printf("Error: failed to encode %s\n", metadataJsonPath)
+		slog.Warn("failed to encode imdb.json", "item", movieInfo.Title, "reason", err.Error())
 		return
 	}
 }
 
 func fetchMetadataTvshow(findRes *tmdbFindResponse, imdbId string, item *TreeNode) {
 	if len(findRes.TvResults) > 1 {
-		fmt.Printf("Error: tmdb api lookup for %s yielded multiple results, skipping", item.Path)
+		slog.Warn("tmdb api lookup yield multiple results, skipping", "offendingMedia", item.Path)
 		return
 	}
 
 	if len(findRes.TvResults) == 0 && len(findRes.MovieResults) != 0 {
 		rootLibraryName := AllLibrariesMap[item.RootUuid].DisplayName
-		fmt.Printf("Error: %s in %s has likely been mislablled as a tvshow when it is actually a movie, skipping\n", item.Path, rootLibraryName)
+		slog.Warn("item has likely been mislablled as a tvshow when it is actually a movie, skipping", "item", fmt.Sprintf("%s in %s", item.Path, rootLibraryName))
 		return
 	}
 
 	if len(findRes.TvResults) == 0 {
-		fmt.Printf("Error: tmdb api lookup for %s yielded no results, skipping", item.Path)
+		slog.Warn("tmdb api lookup yield not results, skipping", "item", item.Path)
 		return
 	}
 
@@ -359,23 +359,23 @@ func fetchMetadataTvshow(findRes *tmdbFindResponse, imdbId string, item *TreeNod
 
 	err := tmdbFetchImage(posterPath, posterImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch poster image for %s\n", tvshowInfo.Name)
+		slog.Warn("failed to fetch poster image", "item", tvshowInfo.Name, "reason", err.Error())
 	}
 
 	err = tmdbFetchImage(logoPath, logoImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch logo image for %s\n", tvshowInfo.Name)
+		slog.Warn("failed to fetch logo image", "item", tvshowInfo.Name, "reason", err.Error())
 	}
 
 	err = tmdbFetchImage(backdropPath, backdropImagePath)
 	if err != nil {
-		fmt.Printf("Warning: failed to fetch backdrop image for %s\n", tvshowInfo.Name)
+		slog.Warn("failed to fetch backdrop image", "item", tvshowInfo.Name, "reason", err.Error())
 	}
 
 	metadataJsonPath := path.Join(MetadataDirPath, "imdb.json")
 	metadataJsonFile, err := os.Create(metadataJsonPath)
 	if err != nil {
-		fmt.Printf("Error: failed to create %s\n", metadataJsonPath)
+		slog.Warn("failed to create imdb.json", "item", metadataJsonPath, "reason", err.Error())
 		return
 	}
 	defer metadataJsonFile.Close()
@@ -383,7 +383,7 @@ func fetchMetadataTvshow(findRes *tmdbFindResponse, imdbId string, item *TreeNod
 	imdbJsonEncoder := json.NewEncoder(metadataJsonFile)
 	imdbJsonEncoder.SetIndent("", "    ")
 	if err = imdbJsonEncoder.Encode(tvshowInfo); err != nil {
-		fmt.Printf("Error: failed to encode %s\n", metadataJsonPath)
+		slog.Warn("failed to encode imdb.json", "item", tvshowInfo.Name, "reason", err.Error())
 		return
 	}
 }

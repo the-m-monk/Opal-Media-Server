@@ -1,7 +1,7 @@
 package librarymgmt
 
 import (
-	"fmt"
+	"log/slog"
 	"opal/internal/config"
 	"os"
 	"runtime"
@@ -16,12 +16,12 @@ func Init() {
 
 	libraryConfigList := config.FindNode("/libraries", &config.RootConfigNode)
 	if libraryConfigList == nil {
-		fmt.Println("Error: unable to find /libraries in config directory")
+		slog.Error("unable to find /libraries in config directory")
 		os.Exit(1)
 	}
 
 	for _, libConfig := range libraryConfigList.Children {
-		fmt.Printf("Parsing %s\n", libConfig.Name)
+		slog.Info("Loading library", "configPath", libConfig.Name)
 
 		newLib := &LibraryRecord{
 			DisplayName: config.FetchValue(libConfig.Name, "display_name", false),
@@ -29,7 +29,7 @@ func Init() {
 		}
 
 		if strings.HasPrefix(newLib.DisplayName, "ERROR") || strings.HasPrefix(newLib.Path, "ERROR") {
-			fmt.Printf("Error in library config, skipping")
+			slog.Error("Error in library config, skipping", "libName", libConfig.Name)
 			continue
 		}
 

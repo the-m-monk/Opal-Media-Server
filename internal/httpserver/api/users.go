@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"opal/internal/jfstructs"
 	"opal/internal/librarymgmt"
@@ -449,7 +450,7 @@ func EndpointUsersItemsByUuidMovie(w http.ResponseWriter, r *http.Request, itemU
 	case "mov,mp4,m4a,3gp,3g2,mj2":
 		res.Container = "mp4"
 	default:
-		fmt.Printf("Warning: unrecognised container format: %s\n", movieProbe.Format.FormatName)
+		slog.Warn("unrecognised container format", "offendingMedia", item.MovieMetadata.Title, "containerFormat", movieProbe.Format.FormatName)
 		res.Container = "Unknown" //Might be incorrect behaviour
 	}
 

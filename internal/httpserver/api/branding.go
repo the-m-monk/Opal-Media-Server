@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 	"opal/internal/config"
 	"opal/internal/jfstructs"
@@ -20,7 +20,7 @@ func EndpointBrandingConfiguration(w http.ResponseWriter, r *http.Request) {
 	customCss, err := os.ReadFile(cssPath)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			log.Printf("[WARN] Failed to load custom css from %s: %v\n", cssPath, err)
+			slog.Warn("failed to laod custom css", "path", cssPath, "reason", err)
 		}
 		customCss = []byte("")
 	}
@@ -34,7 +34,5 @@ func EndpointBrandingConfiguration(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(w)
 	enc.SetEscapeHTML(false) //Needed to prevent the json encoder from mangling branding.CustomCss
-	if err := enc.Encode(branding); err != nil {
-		log.Printf("[ERROR] EndpointBrandingConfiguration: %v", err)
-	}
+	enc.Encode(branding)
 }

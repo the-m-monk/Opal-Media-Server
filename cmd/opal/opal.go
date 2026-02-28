@@ -1,12 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"flag"
+	"log/slog"
+	"net/http"
 	"opal/internal/config"
-	"opal/internal/httpserver"
 	"opal/internal/librarymgmt"
 	"opal/internal/usermgmt"
 	"os"
+	"time"
+
+	"github.com/lmittmann/tint"
 	// _ "net/http/pprof"
 )
 
@@ -14,17 +18,44 @@ import (
 var version_number = "dev"
 
 func main() {
-	//	go func() {
-	//		log.Println("pprof debugger on http://localhost:6060")
-	//		log.Fatal(http.ListenAndServe("localhost:6060", nil))
-	//	}()
+	logLevel := flag.String("log", "info", "set log level (debug, info, warn, error)")
+	flag.Parse()
 
-	fmt.Println("Opal media server starting \nVersion:", version_number)
+	var level slog.Level
+	switch *logLevel {
+	case "debug":
+		level = slog.LevelDebug
+	case "warn":
+		level = slog.LevelWarn
+	case "error":
+		level = slog.LevelError
+	default:
+		level = slog.LevelInfo
+	}
+
+	logger := slog.New(tint.NewHandler(os.Stdout, &tint.Options{
+		Level:      level,
+		TimeFormat: time.TimeOnly,
+	}))
+
+	slog.SetDefault(logger)
+
+	slog.Info("Opal media server starting", "version", version_number)
+
+	if *logLevel == "debug" {
+		addr := "localhost:6060"
+		go func() {
+			slog.Debug("starting pprof debugger", "addr", addr)
+			if err := http.ListenAndServe(addr, nil); err != nil && err != http.ErrServerClosed {
+				slog.Error("pprof debugger failed", "error", err)
+			}
+		}()
+	}
 
 	//TODO: make configurable
 	dbDir := "./db"
 	if err := os.MkdirAll(dbDir, 0755); err != nil {
-		fmt.Println("Error: failed to mkdir ./db")
+		slog.Error("failed to mkdir", "path", dbDir)
 		os.Exit(1)
 	}
 
@@ -32,5 +63,5 @@ func main() {
 	usermgmt.Init()
 	librarymgmt.Init()
 
-	httpserver.Start()
+	//httpserver.Start()
 }

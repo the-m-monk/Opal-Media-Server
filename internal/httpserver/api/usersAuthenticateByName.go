@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"opal/internal/jfstructs"
 	"opal/internal/usermgmt"
@@ -39,7 +38,6 @@ func EndpointUsersAuthenticateByName(w http.ResponseWriter, r *http.Request) {
 	var aT usermgmt.AccessToken
 
 	if usermgmt.Authenticate(userRecord, authReq.Pw, &aT) != "SUCCESS" {
-		fmt.Printf("API info: failed to authenticate %s\n", authReq.Username)
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}

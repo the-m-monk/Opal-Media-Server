@@ -7,6 +7,7 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -72,20 +73,20 @@ func tmdbFind(imdbId string) *tmdbFindResponse {
 
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Printf("Error: tmdb api returned http status code %d\n", resp.StatusCode)
+			slog.Error("tmdb api failed during find", "httpStatusCode", resp.StatusCode, "imdbID", imdbId)
 			return nil
 		}
 
 		if resp.StatusCode == http.StatusTooManyRequests {
 			resp.Body.Close()
-			fmt.Printf("Non-Fatal Error: rate limited by tmdb when attempting to fetch resources for %s\n", imdbId)
+			slog.Info("non-fatal error: rate limited by tmdb when attempting to fetch resources", "imdbID", imdbId)
 			//TODO: actually check Retry-After
 			time.Sleep(2 * time.Second)
 			continue
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			fmt.Printf("Error: status code %d for %s\n", resp.StatusCode, imdbId)
+			slog.Error("tmdb api returned non-ok status code", "statusCode", resp.StatusCode, "imdbID", imdbId)
 			resp.Body.Close()
 			return nil
 		}
@@ -115,20 +116,20 @@ func tmdbFetchMovie(tmdbId int) *tmdbMovie {
 
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Printf("Error: tmdb api returned http status code %d\n", resp.StatusCode)
+			slog.Error("tmdb api failed during movie fetch", "httpStatusCode", resp.StatusCode, "tmdbID", tmdbId)
 			return nil
 		}
 
 		if resp.StatusCode == http.StatusTooManyRequests {
 			resp.Body.Close()
-			fmt.Printf("Non-Fatal Error: rate limited by tmdb when attempting to fetch resources for tmdb-%d\n", tmdbId)
-			//TODO: actually check Retry-After header
+			slog.Info("non-fatal error: rate limited by tmdb when attempting to fetch resources", "tmdbID", tmdbId)
+			//TODO: actually check Retry-After
 			time.Sleep(2 * time.Second)
 			continue
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			fmt.Printf("Error: tmdb api returned http status code %d\n", resp.StatusCode)
+			slog.Error("tmdb api returned non-ok status code", "statusCode", resp.StatusCode, "tmdbID", tmdbId)
 			resp.Body.Close()
 			return nil
 		}
@@ -158,20 +159,20 @@ func tmdbFetchTvshow(tmdbId int) *tmdbTvshow {
 
 		resp, err := client.Do(req)
 		if err != nil {
-			fmt.Printf("Error: tmdb api returned http status code %d\n", resp.StatusCode)
+			slog.Error("tmdb api failed during tvshow fetch", "httpStatusCode", resp.StatusCode, "tmdbID", tmdbId)
 			return nil
 		}
 
 		if resp.StatusCode == http.StatusTooManyRequests {
 			resp.Body.Close()
-			fmt.Printf("Non-Fatal Error: rate limited by tmdb when attempting to fetch resources for tmdb-%d\n", tmdbId)
-			//TODO: actually check Retry-After header
+			slog.Info("non-fatal error: rate limited by tmdb when attempting to fetch resources", "tmdbID", tmdbId)
+			//TODO: actually check Retry-After
 			time.Sleep(2 * time.Second)
 			continue
 		}
 
 		if resp.StatusCode != http.StatusOK {
-			fmt.Printf("Error: tmdb api returned http status code %d\n", resp.StatusCode)
+			slog.Error("tmdb api returned non-ok status code", "statusCode", resp.StatusCode, "tmdbID", tmdbId)
 			resp.Body.Close()
 			return nil
 		}
